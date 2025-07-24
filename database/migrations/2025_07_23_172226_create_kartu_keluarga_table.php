@@ -11,10 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kematians', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+       Schema::create('kartu_keluarga', function (Blueprint $table) {
+    $table->id();
+    $table->string('no_kk')->unique();
+    $table->string('nik');
+    $table->string('hubungan_dalam_keluarga');
+    $table->string('alamat');
+    $table->string('desa');
+    $table->timestamps();
+
+});
+
     }
 
     /**
@@ -22,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kematians');
+        Schema::dropIfExists('kartu_keluarga');
     }
 };

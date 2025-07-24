@@ -11,10 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('perpindahans', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+       Schema::create('kematian', function (Blueprint $table) {
+    $table->id();
+    $table->string('nik');
+    $table->date('tanggal_meninggal');
+    $table->string('tempat_meninggal');
+    $table->timestamps();
+
+    $table->foreign('nik')->references('nik')->on('warga')->onDelete('cascade');
+});
+
     }
 
     /**
@@ -22,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('perpindahans');
+        Schema::dropIfExists('kematian');
     }
 };

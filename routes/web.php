@@ -26,10 +26,13 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->prefix('user')->name('user.')->group(function () {
     Route::get('/beranda', [UserBerandaController::class, 'index'])->name('beranda');
+    Route::get('/lihat-data/{kategori?}', [UserBerandaController::class, 'lihatData'])->name('lihatData');
 });
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/beranda', [AdminBerandaController::class, 'index'])->name('beranda');
 });
+
+
 
 Route::get('/redirect-by-role', function () {
     if (auth()->user()->role === 'admin') {

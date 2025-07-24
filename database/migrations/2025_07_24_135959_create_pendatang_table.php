@@ -11,8 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kelahirans', function (Blueprint $table) {
+        Schema::create('pendatang', function (Blueprint $table) {
             $table->id();
+            $table->string('nik'); 
+            $table->string('alamat_lama');
+            $table->date('tanggal_datang');
+
+            
+            $table->foreign('nik')->references('nik')->on('warga')->onDelete('cascade');
+
             $table->timestamps();
         });
     }
@@ -22,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kelahirans');
+        Schema::dropIfExists('pendatang');
     }
 };

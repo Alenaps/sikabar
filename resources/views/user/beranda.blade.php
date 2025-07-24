@@ -1,57 +1,61 @@
-@extends('layouts.app')
+@extends('layouts.user')
 
 @section('content')
-<div class="p-6">
-    <h1 class="text-2xl font-bold mb-4">BERANDA</h1>
-    <p class="mb-6">Halo, {{ Auth::user()->name }}</p>
+<h1 class="text-2xl font-bold mb-4">BERANDA</h1>
+<p class="mb-6">Halo, {{ Auth::user()->name }}</p>
 
-    <div class="grid grid-cols-3 gap-4">
-        <div class="bg-yellow-300 p-4 rounded shadow text-center">
-            <p class="text-lg font-bold">{{ $jumlahPendatang }}</p>
-            <p>Jumlah Pendatang Baru</p>
-        </div>
-        <div class="bg-purple-300 p-4 rounded shadow text-center">
-            <p class="text-lg font-bold">{{ $jumlahPerpindahan }}</p>
-            <p>Jumlah Perpindahan</p>
-        </div>
-        <div class="bg-cyan-300 p-4 rounded shadow text-center">
-            <p class="text-lg font-bold">{{ $jumlahKelahiran }}</p>
-            <p>Jumlah Kelahiran</p>
-        </div>
-        <div class="bg-orange-300 p-4 rounded shadow text-center">
-            <p class="text-lg font-bold">{{ $jumlahKematian }}</p>
-            <p>Jumlah Kematian</p>
-        </div>
-        <div class="bg-red-300 p-4 rounded shadow text-center">
-            <p class="text-lg font-bold">{{ $jumlahKK }}</p>
-            <p>Jumlah Kartu Keluarga</p>
-        </div>
-        <div class="bg-green-300 p-4 rounded shadow text-center">
-            <p class="text-lg font-bold">{{ $jumlahWarga }}</p>
-            <p>Jumlah Total Warga</p>
-        </div>
+<!-- Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <a href="{{ route('user.lihatData', ['kategori' => 'pendatang']) }}" class="bg-yellow-300 hover:bg-yellow-400 p-6 rounded-lg shadow text-center">
+        <p class="text-3xl font-bold">{{ $jumlahPendatang }}</p>
+        <p class="mt-2 font-semibold">Jumlah Pendatang Baru</p>
+    </a>
+    <a href="{{ route('user.lihatData', ['kategori' => 'perpindahan']) }}" class="bg-purple-300 hover:bg-purple-400 p-6 rounded-lg shadow text-center">
+        <p class="text-3xl font-bold">{{ $jumlahPerpindahan }}</p>
+        <p class="mt-2 font-semibold">Jumlah Perpindahan</p>
+    </a>
+    <a href="{{ route('user.lihatData', ['kategori' => 'kelahiran']) }}" class="bg-cyan-300 hover:bg-cyan-400 p-6 rounded-lg shadow text-center">
+        <p class="text-3xl font-bold">{{ $jumlahKelahiran }}</p>
+        <p class="mt-2 font-semibold">Jumlah Kelahiran</p>
+    </a>
+    <a href="{{ route('user.lihatData', ['kategori' => 'kematian']) }}" class="bg-orange-300 hover:bg-orange-400 p-6 rounded-lg shadow text-center">
+        <p class="text-3xl font-bold">{{ $jumlahKematian }}</p>
+        <p class="mt-2 font-semibold">Jumlah Kematian</p>
+    </a>
+    <a href="{{ route('user.lihatData', ['kategori' => 'kk']) }}" class="bg-red-300 hover:bg-red-400 p-6 rounded-lg shadow text-center">
+        <p class="text-3xl font-bold">{{ $jumlahKK }}</p>
+        <p class="mt-2 font-semibold">Jumlah Kartu Keluarga</p>
+    </a>
+    <a href="{{ route('user.lihatData', ['kategori' => 'warga']) }}" class="bg-green-300 hover:bg-green-400 p-6 rounded-lg shadow text-center">
+        <p class="text-3xl font-bold">{{ $jumlahWarga }}</p>
+        <p class="mt-2 font-semibold">Jumlah Total Warga</p>
+    </a>
+</div>
+
+<!-- Statistik -->
+<h2 class="text-xl font-bold mb-4">Statistik Jumlah Penduduk</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white p-4 rounded shadow">
+        <h3 class="font-semibold mb-2">Bulan Ini</h3>
+        <ul>
+            @foreach($statistikBulanIni as $data)
+                <li class="flex justify-between border-b py-1">
+                    <span>{{ $data->desa }}</span>
+                    <span>{{ $data->jumlah }} warga</span>
+                </li>
+            @endforeach
+        </ul>
     </div>
-
-    <div class="mt-10">
-        <h2 class="text-xl font-bold mb-2">Statistik Jumlah Penduduk</h2>
-        <div class="grid grid-cols-2 gap-6">
-            <div>
-                <p class="mb-2 font-semibold">Bulan Ini</p>
-                <ul>
-                    @foreach($statistikBulanIni as $data)
-                        <li>{{ $data->desa }}: {{ $data->jumlah }} warga</li>
-                    @endforeach
-                </ul>
-            </div>
-            <div>
-                <p class="mb-2 font-semibold">Bulan Lalu</p>
-                <ul>
-                    @foreach($statistikBulanLalu as $data)
-                        <li>{{ $data->desa }}: {{ $data->jumlah }} warga</li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
+    <div class="bg-white p-4 rounded shadow">
+        <h3 class="font-semibold mb-2">Bulan Lalu</h3>
+        <ul>
+            @foreach($statistikBulanLalu as $data)
+                <li class="flex justify-between border-b py-1">
+                    <span>{{ $data->desa }}</span>
+                    <span>{{ $data->jumlah }} warga</span>
+                </li>
+            @endforeach
+        </ul>
     </div>
 </div>
 @endsection
