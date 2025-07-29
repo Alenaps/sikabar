@@ -27,7 +27,7 @@ class KelahiranModel extends Model
     }
     public function ibu()
     {
-        return $this->belongsTo(WargaModel::class, 'nik_ayah', 'nik');
+        return $this->belongsTo(WargaModel::class, 'nik_ibu', 'nik');
     }
 
     public function kartuKeluarga()

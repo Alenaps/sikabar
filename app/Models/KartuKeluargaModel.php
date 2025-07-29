@@ -9,9 +9,12 @@ class KartuKeluargaModel extends Model
 {
      use HasFactory;
 
+     protected $table = 'kartu_keluarga';
+     public $incrementing = false;
+     protected $keyType = 'string';
+
     protected $fillable = [
         'no_kk',
-        'hubungan_dalam_keluarga',
         'alamat',
         'desa',
        
@@ -19,11 +22,17 @@ class KartuKeluargaModel extends Model
 
     public function warga()
     {
-        return $this->hasMany(WargaModel::class, 'no_kk', 'no_kk');
+        return $this->hasMany(WargaModel::class, 'kartu_keluarga_id');
     }
     public function kelahiran()
     {
-        return $this->hasMany(KelahiranModel::class, 'no_kk', 'no_kk');
+        return $this->hasMany(KelahiranModel::class, 'kartu_keluarga_id', 'id');
     }
+    
+    public function anggota()
+    {
+        return $this->hasMany(WargaModel::class, 'kartu_keluarga_id', 'id');
+    }
+
 }
 

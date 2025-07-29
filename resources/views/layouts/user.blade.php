@@ -1,55 +1,78 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIKABAR | {{ $title ?? 'Dashboard' }}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    <link rel="icon" href="{{ asset('img/logo.png') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>@yield('title', 'Dashboard User')</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0047ab',
+            secondary: '#001f5b'
+          }
+        }
+      }
+    }
+  </script>
 </head>
 <body class="bg-gray-100 font-sans antialiased">
 
-    <div class="flex h-screen">
-        {{-- Sidebar --}}
-        <aside class="w-64 bg-gradient-to-b from-blue-700 to-blue-900 text-white flex flex-col justify-between">
-            <div>
-                <div class="p-4 flex items-center gap-2">
-                    <img src="{{ asset('img/logo.png') }}" class="w-10 h-10" alt="Logo">
-                    <h1 class="font-bold text-lg leading-tight">Sistem Informasi<br>Kependudukan</h1>
-                </div>
-                <p class="px-4 text-sm text-white font-medium">Kecamatan Bandar Sribhawono</p>
-                <div class="border-t border-white my-3"></div>
+<!-- HEADER -->
+<header class="bg-blue-600 text-white px-4 py-3 flex items-center justify-between md:justify-start space-x-4 shadow-md">
+  <img src="{{ asset('assets/img/kec.png') }}" alt="Logo" class="w-10 h-10">
+  <div>
+    <h1 class="text-lg font-bold leading-tight">Sistem Informasi Kependudukan</h1>
+    <p class="text-sm">Kecamatan Bandar Sribhawono</p>
+  </div>
+</header>
 
-                {{-- Menu --}}
-                <nav class="px-4 space-y-2">
-                    <a href="{{ route('user.beranda') }}" class="block py-2 px-4 rounded hover:bg-blue-600 {{ request()->routeIs('user.beranda') ? 'bg-blue-600' : '' }}">
-                        🏠 BERANDA
-                    </a>
-                    <p class="text-sm mt-4 font-bold text-white">LIHAT DATA</p>
-                    <a href="{{ route('user.perpindahan.index') }}" class="block py-2 px-4 rounded hover:bg-blue-600 {{ request()->routeIs('user.perpindahan.*') ? 'bg-blue-600' : '' }}">
-                        📄 PERPINDAHAN
-                    </a>
-                    <a href="{{ route('user.pendatang.index') }}" class="block py-2 px-4 rounded hover:bg-blue-600 {{ request()->routeIs('user.pendatang.*') ? 'bg-blue-600' : '' }}">
-                        📥 PENDATANG BARU
-                    </a>
-                    <a href="{{ route('user.kelahiran.index') }}" class="block py-2 px-4 rounded hover:bg-blue-600 {{ request()->routeIs('user.kelahiran.*') ? 'bg-blue-600' : '' }}">
-                        👶 KELAHIRAN
-                    </a>
-                    <a href="{{ route('user.kematian.index') }}" class="block py-2 px-4 rounded hover:bg-blue-600 {{ request()->routeIs('user.kematian.*') ? 'bg-blue-600' : '' }}">
-                        ⚰️ KEMATIAN
-                    </a>
-                </nav>
-            </div>
-            <footer class="text-center text-xs p-4 text-white opacity-80">
-                Copyright © LNP 2025
-            </footer>
-        </aside>
+<div class="flex flex-col md:flex-row min-h-screen">
 
-        {{-- Main Content --}}
-        <main class="flex-1 p-8 overflow-y-auto bg-gray-100">
-            @yield('content')
-        </main>
-    </div>
+  <!-- SIDEBAR -->
+  <aside class="w-full md:w-64 bg-gradient-to-b from-blue-800 to-blue-900 text-white flex flex-col">
+    <nav class="flex-1 px-4 py-6 space-y-2">
+     <nav class="flex-1 space-y-4">
+        <a href="{{ route('user.beranda') }}" class="flex items-center gap-3 hover:bg-blue-700 p-2 rounded-md transition">
+            <img src="https://img.icons8.com/fluency/48/home.png" alt="Home" class="w-6 h-6">
+            <span class="text-base">Beranda</span>
+        </a>
+        <a href="{{ route('user.warga.index') }}" class="flex items-center gap-3 hover:bg-blue-700 p-2 rounded-md transition">
+            <img src="https://img.icons8.com/3d-fluency/94/group--v1.png" alt="Data Warga" class="w-6 h-6">
+            <span class="text-base">Data Warga</span>
+        </a>
+        <a href="{{ route('user.kartukeluarga.index') }}" class="flex items-center gap-3 hover:bg-blue-700 p-2 rounded-md transition">
+            <img src="https://img.icons8.com/stickers/100/overview-pages-1.png" alt="Kartu Keluarga" class="w-6 h-6">
+            <span class="text-base">Kartu Keluarga</span>
+        </a>
+    </nav>
+      <p class="text-sm font-semibold mt-4 border-t border-blue-500 pt-2">LIHAT DATA</p>
+      <a href="{{ route('user.perpindahan.index') }}" class="block ml-2 hover:text-blue-300">• PERPINDAHAN</a>
+      <a href="{{ route('user.pendatang.index') }}" class="block ml-2 hover:text-blue-300">• PENDATANG BARU</a>
+      <a href="{{ route('user.kelahiran.index') }}" class="block ml-2 hover:text-blue-300">• KELAHIRAN</a>
+      <a href="{{ route('user.kematian.index') }}" class="block ml-2 hover:text-blue-300">• KEMATIAN</a>
+    </nav>
+
+    <!-- Tombol Logout -->
+    <form method="POST" action="{{ route('logout') }}" class="px-4 pb-4">
+      @csrf
+      <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white text-sm py-2 rounded shadow transition">
+        🔓 Logout
+      </button>
+    </form>
+
+    <footer class="text-center text-xs p-4 border-t border-blue-700">
+      Copyright by LNP 2025
+    </footer>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 p-4 md:p-10 bg-white">
+    @yield('content')
+  </main>
+</div>
 
 </body>
 </html>

@@ -17,20 +17,24 @@ class WargaModel extends Model
 
     protected $fillable = [
         'nik',
-        'no_kk',
         'nama',
+        'no_kk',
+        'alamat',
+        'desa',
         'jenis_kelamin',
         'tempat_lahir',
         'tanggal_lahir',
         'agama',
         'status_kependudukkan',
+        'hubungan_dalam_keluarga',
+        'kartu_keluarga_id',
               
     ];
 
     // Relasi dengan Kartu Keluarga
-    public function kartuKeluarga()
+    public function kartu_keluarga()
     {
-        return $this->belongsTo(KartuKeluargaModel::class, 'no_kk', 'no_kk');
+        return $this->belongsTo(KartuKeluargaModel::class, 'kartu_keluarga_id', 'id');
     }
 
     // Relasi dengan Pendatang
@@ -45,7 +49,7 @@ class WargaModel extends Model
         return $this->hasOne(KematianModel::class, 'nik', 'nik');
     }
 
-    // Relasi dengan Kelahiran (jika relevan, tergantung struktur)
+    // Relasi dengan Kelahiran 
     public function kelahiranSebagaiAyah()
     {
         return $this->hasMany(KelahiranModel::class, 'nik_ayah', 'nik');
@@ -60,5 +64,13 @@ class WargaModel extends Model
     {
         return $this->hasOne(PerpindahanModel::class, 'nik', 'nik');
     }
+
+    public function getRouteKeyName()
+    {
+        return 'nik';
+    }
+
+
 }
+
 

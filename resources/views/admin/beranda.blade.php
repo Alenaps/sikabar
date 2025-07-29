@@ -1,22 +1,24 @@
 @extends('layouts.admin')
 
+@section('title', 'Beranda Admin')
+
 @section('content')
-<h1 class="text-3xl font-bold mb-6">BERANDA</h1>
-<p class="mb-6">Halo, Admin {{ Auth::user()->name }}</p>
+  <h2 class="text-2xl font-bold mb-2 text-gray-800">Beranda</h2>
+  <p class="mb-6 text-gray-600">Selamat datang, Admin Desa</p>
 
-<!-- Main Menu -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-    <a href="{{ route('admin.beranda') }}" class="bg-gradient-to-r from-green-300 to-green-500 hover:opacity-90 p-6 rounded-lg shadow text-center font-bold">BERANDA</a>
-    <a href="{{ route('admin.Warga') }}" class="bg-gradient-to-r from-yellow-300 to-yellow-500 hover:opacity-90 p-6 rounded-lg shadow text-center font-bold">DATA WARGA</a>
-    <a href="{{ route('admin.kartuKeluarga') }}" class="bg-gradient-to-r from-orange-300 to-orange-500 hover:opacity-90 p-6 rounded-lg shadow text-center font-bold">KARTU KELUARGA</a>
-</div>
+  <!-- Ringkasan -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+    <a href="{{ route('admin.beranda') }}" class="bg-green-400 hover:bg-green-500 text-white text-center p-4 rounded-lg shadow font-semibold transition">Beranda</a>
+    <a href="{{ route('admin.warga.index') }}" class="bg-yellow-400 hover:bg-yellow-500 text-white text-center p-4 rounded-lg shadow font-semibold transition">Data Warga</a>
+    <a href="{{ route('admin.kartukeluarga.index') }}" class="bg-orange-400 hover:bg-orange-500 text-white text-center p-4 rounded-lg shadow font-semibold transition">Kartu Keluarga</a>
+  </div>
 
-<!-- Kelola Data -->
-<h2 class="text-xl font-bold mb-4">KELOLA DATA</h2>
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-    <a href="{{ route('admin.perpindahan') }}" class="bg-cyan-300 hover:bg-cyan-400 p-4 rounded shadow text-center font-semibold">Perpindahan</a>
-    <a href="{{ route('admin.pendatangBaru') }}" class="bg-blue-300 hover:bg-blue-400 p-4 rounded shadow text-center font-semibold">Pendatang Baru</a>
-    <a href="{{ route('admin.kelahiran') }}" class="bg-teal-300 hover:bg-teal-400 p-4 rounded shadow text-center font-semibold">Kelahiran</a>
-    <a href="{{ route('admin.kematian') }}" class="bg-purple-300 hover:bg-purple-400 p-4 rounded shadow text-center font-semibold">Kematian</a>
-</div>
+  <!-- Kelola Data -->
+  <h3 class="text-lg font-semibold text-center mb-4 text-gray-700">Kelola Data</h3>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    <a href="{{ route('admin.perpindahan.index') }}" class="bg-cyan-400 hover:bg-cyan-500 text-white p-4 text-center rounded-lg shadow transition">Perpindahan</a>
+    <a href="{{ route('admin.pendatang.index') }}" class="bg-cyan-400 hover:bg-cyan-500 text-white p-4 text-center rounded-lg shadow transition">Pendatang</a>
+    <a href="{{ route('admin.kelahiran.index') }}" class="bg-cyan-400 hover:bg-cyan-500 text-white p-4 text-center rounded-lg shadow transition">Kelahiran</a>
+    <a href="{{ route('admin.kematian.index') }}" class="bg-cyan-400 hover:bg-cyan-500 text-white p-4 text-center rounded-lg shadow transition">Kematian</a>
+  </div>
 @endsection

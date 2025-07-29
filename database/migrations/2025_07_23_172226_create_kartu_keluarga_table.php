@@ -14,8 +14,6 @@ return new class extends Migration
        Schema::create('kartu_keluarga', function (Blueprint $table) {
     $table->id();
     $table->string('no_kk')->unique();
-    $table->string('nik');
-    $table->string('hubungan_dalam_keluarga');
     $table->string('alamat');
     $table->string('desa');
     $table->timestamps();

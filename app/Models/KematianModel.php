@@ -9,6 +9,8 @@ class KematianModel extends Model
 {
     use HasFactory;
 
+    protected $table = 'kematian';
+
     protected $fillable = [
         'nik',
         'tanggal_kematian',
