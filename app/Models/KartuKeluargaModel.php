@@ -22,7 +22,7 @@ class KartuKeluargaModel extends Model
 
     public function warga()
     {
-        return $this->hasMany(WargaModel::class, 'kartu_keluarga_id');
+        return $this->hasMany(WargaModel::class, 'kartu_keluarga_id', 'id');
     }
     public function kelahiran()
     {

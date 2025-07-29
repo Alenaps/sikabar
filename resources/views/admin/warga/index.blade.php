@@ -36,7 +36,7 @@
                 @forelse($wargas as $warga)
                 <tr>
                     <td class="px-3 py-2">{{ $warga->nik }}</td>
-                    <td class="px-3 py-2">{{ $warga->kartu_keluargas->no_kk ?? '-' }}</td>
+                    <td class="px-3 py-2">{{ $warga->kartu_keluarga->no_kk ?? '-' }}</td>
                     <td class="px-3 py-2">{{ $warga->nama }}</td>
                     <td class="px-3 py-2">{{ $warga->jenis_kelamin }}</td>
                     <td class="px-3 py-2">{{ $warga->tempat_lahir }}</td>
