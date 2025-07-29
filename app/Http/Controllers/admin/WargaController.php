@@ -38,7 +38,6 @@ class WargaController extends Controller
         $validated = $request->validate([
             'nik' => 'required|unique:warga,nik',
             'kartu_keluarga_id' => 'required|exists:kartu_keluarga,id',
-            'no_kk' => 'required',
             'nama' => 'required',
             'jenis_kelamin' => 'required',
             'tempat_lahir' => 'required',
@@ -54,9 +53,8 @@ class WargaController extends Controller
     }
 
 
-    public function edit($id)
+    public function edit(WargaModel $warga)
     {
-        $warga = WargaModel::findOrFail($id);
         $kartu_keluarga = KartuKeluargaModel::all();
         return view('admin.warga.edit', compact('warga', 'kartu_keluarga'));
     }

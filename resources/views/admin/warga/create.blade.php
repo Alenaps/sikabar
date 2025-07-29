@@ -67,7 +67,7 @@
              <select name="status_kependudukkan" class="w-full border p-2">
                 <option value="">-- Pilih --</option>
                 <option value="Warga">Warga</option>
-                <option value="Pendatang">Pendatang</Kbd></option>
+                <option value="Pendatang">Pendatang</option>
                 <option value="Perpindahan">Perpindahan</option>
                 <option value="Kelahiran">Kelahiran</option>
                 <option value="Kematian">Kematian</option>

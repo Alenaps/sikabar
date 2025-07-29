@@ -51,8 +51,8 @@
                     </td>
                     <td class="px-3 py-2">
                         <div class="flex items-center gap-2">
-                            <a href="{{ route('admin.warga.edit', $warga->id) }}" class="text-blue-600 hover:underline">Edit</a>
-                            <form action="{{ route('admin.warga.destroy', $warga->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus data ini?')">
+                            <a href="{{ route('admin.warga.edit', $warga) }}" class="text-blue-600 hover:underline">Edit</a>
+                            <form action="{{ route('admin.warga.destroy', $warga) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus data ini?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:underline">Hapus</button>
