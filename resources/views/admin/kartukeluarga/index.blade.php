@@ -23,6 +23,7 @@
         <table class="w-full table-auto border-collapse border border-gray-300">
             <thead class="bg-gray-100">
                 <tr>
+                    <th class="border px-4 py-2">No</th>
                     <th class="border px-4 py-2">No KK</th>
                     <th class="border px-4 py-2">Alamat</th>
                     <th class="border px-4 py-2">Desa</th>
@@ -33,6 +34,7 @@
             <tbody>
                 @forelse ($kartu_keluarga as $kk)
                     <tr>
+                        <td class="border px-4 py-2">{{ $kk->id }}</td>
                         <td class="border px-4 py-2">{{ $kk->no_kk }}</td>
                         <td class="border px-4 py-2">{{ $kk->alamat }}</td>
                         <td class="border px-4 py-2">{{ $kk->desa }}</td>

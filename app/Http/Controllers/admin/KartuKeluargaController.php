@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\KartuKeluargaModel;
+use App\Models\WargaModel;
 
 class KartuKeluargaController extends Controller
 {
@@ -74,9 +75,27 @@ class KartuKeluargaController extends Controller
     }
 
 
-    public function destroy(KartuKeluargaModel $kartu_keluarga)
+    public function destroy($id)
     {
-        $kartu_keluarga->delete();
-        return back()->with('success', 'Data KK berhasil dihapus.');
+        $kk = KartuKeluargaModel::findOrFail($id);
+
+        // Hapus relasi warga terlebih dahulu
+        if ($kk->anggota()->count() > 0) {
+            $kk->anggota()->delete();
+        }
+
+        $kk->delete();
+
+        return redirect()->route('admin.kartukeluarga.index')
+            ->with('success', 'Data KK berhasil dihapus.');
     }
+
+
+    // Remove boot method from controller; move deletion logic to the model
+
+    public function anggota()
+    {
+        return $this->hasMany(WargaModel::class, 'kartu_keluarga_id');
+    }
+
 }

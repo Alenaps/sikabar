@@ -34,7 +34,7 @@ class WargaModel extends Model
     // Relasi dengan Kartu Keluarga
     public function kartu_keluarga()
     {
-        return $this->belongsTo(KartuKeluargaModel::class, 'kartu_keluarga_id', 'id');
+        return $this->belongsTo(KartuKeluargaModel::class, 'kartu_keluargaid', 'id');
     }
 
     // Relasi dengan Pendatang
