@@ -33,7 +33,7 @@ class WargaController extends Controller
         $kartu_keluarga = KartuKeluargaModel::all();
         return view('admin.warga.create', compact('kartu_keluarga'));
     }
-public function store(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'nik' => 'required|unique:warga,nik',

@@ -31,7 +31,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($kartu_keluargas as $kk)
+                @forelse ($kartu_keluarga as $kk)
                     <tr>
                         <td class="border px-4 py-2">{{ $kk->no_kk }}</td>
                         <td class="border px-4 py-2">{{ $kk->alamat }}</td>
@@ -55,7 +55,7 @@
     </div>
 
     <div class="mt-4">
-        {{ $kartu_keluargas->withQueryString()->links() }}
+        {{ $kartu_keluarga->withQueryString()->links() }}
     </div>
 </div>
 @endsection
