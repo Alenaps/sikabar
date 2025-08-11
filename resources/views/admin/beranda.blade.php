@@ -4,7 +4,7 @@
 
 @section('content')
   <h2 class="text-2xl font-bold mb-2 text-gray-800">Beranda</h2>
-  <p class="mb-6 text-gray-600">Selamat datang, Admin Desa</p>
+  <p class="mb-6 text-gray-600">Selamat datang, {{ auth()->user()->name }}</p>
 
   <!-- Ringkasan -->
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">

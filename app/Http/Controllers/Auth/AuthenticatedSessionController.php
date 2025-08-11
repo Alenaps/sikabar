@@ -33,6 +33,8 @@ class AuthenticatedSessionController extends Controller
     if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
         $request->session()->regenerate();
 
+        session()->flash('success', 'Login berhasil! Selamat datang, ' . Auth::user()->name);
+                
         // Redirect berdasarkan role
         if (Auth::user()->role === 'admin') {
             return redirect()->intended('/admin/beranda');

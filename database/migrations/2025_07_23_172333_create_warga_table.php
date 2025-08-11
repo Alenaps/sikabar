@@ -22,7 +22,7 @@ return new class extends Migration
     $table->enum('status_kependudukkan', ['Warga', 'Pendatang', 'Pindah', 'Kematian', 'Kelahiran']);
     $table->timestamps();
 
-    $table->foreign('kartu_keluarga_id')->references('kartu_keluarga_id')->on('kartu_keluarga')->onDelete('cascade');
+    $table->foreignId('kartu_keluarga_id')->constrained('kartu_keluarga')->onDelete('cascade');
 });
 
 }

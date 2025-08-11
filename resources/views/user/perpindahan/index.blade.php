@@ -4,83 +4,116 @@
 <div class="p-6">
     <h2 class="text-xl font-bold mb-4">LIHAT DATA PERPINDAHAN</h2>
 
-    <form method="GET" action="{{ route('user.perpindahan.index') }}" class="flex flex-wrap gap-2 mb-4">
-        <select name="bulan" class="border px-4 py-2">
-            <option value="">Pilih Bulan</option>
-            @foreach(range(1,12) as $bulan)
-                <option value="{{ $bulan }}" {{ request('bulan') == $bulan ? 'selected' : '' }}>
-                    {{ DateTime::createFromFormat('!m', $bulan)->format('F') }}
-                </option>
-            @endforeach
-        </select>
-        <select name="desa" class="border px-4 py-2">
-            <option value="">Pilih Desa</option>
-            @foreach(['Desa 1', 'Desa 2', 'Desa 3'] as $desa)
-                <option value="{{ $desa }}" {{ request('desa') == $desa ? 'selected' : '' }}>{{ $desa }}</option>
-            @endforeach
-        </select>
-        <select name="jenis_kelamin" class="border px-4 py-2">
-            <option value="">Pilih Jenis Kelamin</option>
-            <option value="Laki-laki" {{ request('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-            <option value="Perempuan" {{ request('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-        </select>
-        <select name="usia" class="border px-4 py-2">
-            <option value="">Pilih Usia</option>
-            <option value="0-17" {{ request('usia') == '0-17' ? 'selected' : '' }}>0-17</option>
-            <option value="18-40" {{ request('usia') == '18-40' ? 'selected' : '' }}>18-40</option>
-            <option value="41+" {{ request('usia') == '41+' ? 'selected' : '' }}>41+</option>
-        </select>
+    <form method="GET" action="{{ route('user.perpindahan.index') }}" class="mb-4 space-y-2">
 
-        <button type="submit" class="bg-cyan-400 hover:bg-cyan-500 text-white px-4 py-2 rounded-md shadow">
-            <i class="fas fa-filter"></i> Filter
-        </button>
+        {{-- Bagian 1: Pencarian --}}
+        <div class="flex flex-wrap gap-2 items-center">
+            <input 
+                type="text" 
+                name="cari" 
+                placeholder="Cari NIK / Nama / KK" 
+                value="{{ request('cari') }}" 
+                class="border px-3 py-1 text-sm rounded-md"
+            />
+            <button 
+                type="submit" 
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow text-sm"
+            >
+                <i class="fas fa-search mr-1"></i> Cari
+            </button>
+        </div>
+
+        {{-- Bagian 2: Filter --}}
+        <div class="flex flex-wrap gap-2 items-center">
+            <select name="bulan" class="border px-3 py-1 text-sm rounded-md">
+                <option value="">Pilih Bulan</option>
+                @foreach(range(1,12) as $bulan)
+                    <option value="{{ $bulan }}" {{ request('bulan') == $bulan ? 'selected' : '' }}>
+                        {{ DateTime::createFromFormat('!m', $bulan)->format('F') }}
+                    </option>
+                @endforeach
+            </select>
+
+            <select name="desa" class="border px-3 py-1 text-sm rounded-md">
+                <option value="">Pilih Desa</option>
+                @foreach(['Bandar Agung','Sribhawono', 'Srimenanti','Sripendowo', 'Sadar Sriwijaya','Mekar Jaya', 'Waringin Jaya'] as $desa)
+                    <option value="{{ $desa }}" {{ request('desa') == $desa ? 'selected' : '' }}>{{ $desa }}</option>
+                @endforeach
+            </select>
+
+            <select name="jenis_kelamin" class="border px-3 py-1 text-sm rounded-md">
+                <option value="">Pilih Jenis Kelamin</option>
+                <option value="Laki-laki" {{ request('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                <option value="Perempuan" {{ request('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+            </select>
+
+            
+            <input type="number" name="usia_min" value="{{ request('usia_min') }}" placeholder="Usia min" class="border px-3 py-1 text-sm rounded-md w-24"/>
+            <input type="number" name="usia_max" value="{{ request('usia_max') }}" placeholder="Usia max" class="border px-3 py-1 text-sm rounded-md w-24"/>
+            
+            <button 
+                type="submit" 
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow text-sm">
+                <i class="fas fa-filter mr-1"></i> Filter
+            </button>
+        </div>
+
     </form>
 
     <div class="overflow-auto bg-gray-100 rounded shadow">
-        <table class="min-w-full text-sm text-left">
+        <table class="min-w-full text-xs text-left">
             <thead>
-                <tr class="bg-cyan-700 text-white">
-                    <th class="px-3 py-2">No</th>
-                    <th class="px-3 py-2">NIK</th>
-                    <th class="px-3 py-2">No. KK</th>
-                    <th class="px-3 py-2">Nama</th>
-                    <th class="px-3 py-2">Jenis Kelamin</th>
-                    <th class="px-3 py-2">Tempat Lahir</th>
-                    <th class="px-3 py-2">Tanggal Lahir</th>
-                    <th class="px-3 py-2">Desa</th>
-                    <th class="px-3 py-2">Alamat</th>
-                    <th class="px-3 py-2">Status Kependudukan</th>
-                    <th class="px-3 py-2">Tanggal Pindah</th>
-                    <th class="px-3 py-2">Alamat Baru</th>
+                <tr class="bg-cyan-700 text-white text-center">
+                    <th class="border px-2 py-1">No</th>
+                    <th class="border px-2 py-1">NIK</th>
+                    <th class="border px-2 py-1">NO KK</th>
+                    <th class="border px-2 py-1">Nama</th>
+                    <th class="border px-2 py-1">Jenis Kelamin</th>
+                    <th class="border px-2 py-1">Tempat Lahir</th>
+                    <th class="border px-2 py-1">Tanggal Lahir</th>
+                    <th class="border px-2 py-1">Desa</th>
+                    <th class="border px-2 py-1">Alamat Lama</th>
+                    <th class="border px-2 py-1">Status Kependudukan</th>
+                    <th class="border px-2 py-1">Tanggal Pindah</th>
+                    <th class="border px-2 py-1">Alamat Baru</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($perpindahan as $item)
                     <tr class="border-t">
-                        <td class="px-3 py-2">{{ $loop->iteration }}</td>
-                        <td class="px-3 py-2">{{ $item->nik }}</td>
-                        <td class="px-3 py-2">{{ $item->no_kk }}</td>
-                        <td class="px-3 py-2">{{ $item->nama }}</td>
-                        <td class="px-3 py-2">{{ $item->jenis_kelamin }}</td>
-                        <td class="px-3 py-2">{{ $item->tempat_lahir }}</td>
-                        <td class="px-3 py-2">{{ $item->tanggal_lahir }}</td>
-                        <td class="px-3 py-2">{{ $item->desa }}</td>
-                        <td class="px-3 py-2">{{ $item->alamat }}</td>
-                        <td class="px-3 py-2">{{ $item->status_kependudukan }}</td>
-                        <td class="px-3 py-2">{{ $item->tanggal_pindah }}</td>
-                        <td class="px-3 py-2">{{ $item->alamat_baru }}</td>
+                        <td class="border px-2 py-1">{{ $loop->iteration }}</td>
+                        <td class="border px-2 py-1">{{ $item->nik ?? '-' }}</td>
+                        <td class="border px-2 py-1">{{ $item->warga->kartu_keluarga->no_kk ?? '-' }}</td>
+                        <td class="border px-2 py-1">{{ $item->warga->nama ?? '-' }}</td>
+                        <td class="border px-2 py-1">{{ $item->warga->jenis_kelamin ?? '-' }}</td>
+                        <td class="border px-2 py-1">{{ $item->warga->tempat_lahir ?? '-' }}</td>
+                        <td class="border px-2 py-1">{{ $item->warga->tanggal_lahir ?? '-' }}</td>
+                        <td class="border px-2 py-1">{{ $item->warga->kartu_keluarga->desa ?? '-' }}</td>
+                        <td class="border px-2 py-1">{{ $item->warga->kartu_keluarga->alamat ?? '-' }}</td>
+                        <td class="border px-2 py-1">{{ $item->warga->status_kependudukkan ?? '-' }}</td>
+                        <td class="border px-2 py-1">{{ $item->tanggal_pindah ?? '-' }}</td>
+                        <td class="border px-2 py-1">{{ $item->alamat_baru ?? '-' }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="12" class="px-3 py-2 text-center text-gray-500">Data tidak ditemukan</td>
+                        <td colspan="12" class="px-2 py-1 text-center text-gray-500">Data tidak ditemukan</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
-    <a href="{{ route('user.perpindahan.export') }}" class="fixed bottom-6 right-6 bg-cyan-400 text-white px-4 py-2 rounded-md shadow hover:bg-cyan-500">
-        <i class="fas fa-print"></i> Cetak
-    </a>
+    <div class="flex gap-2 mt-4">
+        <a href="{{ route('user.perpindahan.exportPdf', request()->query()) }}" 
+        target="_blank" 
+        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm">
+        <i class="fas fa-file-pdf mr-1"></i> Cetak PDF
+        </a>
+
+        <a href="{{ route('user.perpindahan.exportExcel', request()->query()) }}" 
+        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm">
+        <i class="fas fa-file-excel mr-1"></i> Cetak Excel
+        </a>
+    </div>
 </div>
 @endsection

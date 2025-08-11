@@ -17,6 +17,7 @@
       }
     }
   </script>
+  @stack('styles')
 </head>
 <body class="bg-gray-100 font-sans antialiased">
 
@@ -73,6 +74,20 @@
     @yield('content')
   </main>
 </div>
-
+  @stack('scripts')
 </body>
 </html>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if(session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: "{{ session('success') }}",
+        showConfirmButton: false,
+        timer: 3000
+    })
+</script>
+@endif

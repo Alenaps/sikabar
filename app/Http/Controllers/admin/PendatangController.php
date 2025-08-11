@@ -3,61 +3,86 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PendatangModel;
 use Illuminate\Http\Request;
+use App\Models\PendatangModel;
+use App\Models\WargaModel;
 
 class PendatangController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pendatangs = PendatangModel::all();
-        return view('admin.pendatang.index', compact('pendatangs'));
+         $pendatang = PendatangModel::with('warga') 
+        ->when($request->search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nik', 'like', "%{$search}%")
+                  ->orWhere('nama', 'like', "%{$search}%");
+            });
+        })
+        ->latest()
+        ->paginate(10);
+
+        return view('admin.pendatang.index', compact('pendatang'));
     }
 
     public function create()
     {
-        return view('admin.pendatang.create');
+        $wargas = WargaModel::all();
+        return view('admin.pendatang.create', compact('wargas'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'nik' => 'required|exists:wargas,nik|unique:pendatang,nik',
-            'nama' => 'required|string',
-            'alamat_lama' => 'required|string',
-            'alamat_baru' => 'required|string',
+            'nik' => 'required|exists:warga,nik',
+            'alamat_lama' => 'required',
             'tanggal_datang' => 'required|date',
         ]);
 
-        PendatangModel::create($request->all());
+        $warga = WargaModel::where('nik', $request->nik)->first();
+
+        pendatangModel::create([
+            'nik' => $warga->nik,
+            'nama' => $warga->nama,
+            'alamat_lama' => $request->alamat_lama,
+            'tanggal_datang' => $request->tanggal_datang,
+        ]);
+
         return redirect()->route('admin.pendatang.index')->with('success', 'Data pendatang berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
         $pendatang = PendatangModel::findOrFail($id);
-        return view('admin.pendatang.edit', compact('pendatang'));
+        $wargas = WargaModel::all();
+        return view('admin.pendatang.edit', compact('pendatang', 'wargas'));
     }
 
     public function update(Request $request, $id)
     {
-        $pendatang = PendatangModel::findOrFail($id);
-
         $request->validate([
-            'nik' => 'required|exists:wargas,nik|unique:pendatang,nik,' . $pendatang->id,
-            'nama' => 'required|string',
-            'alamat_lama' => 'required|string',
-            'alamat_baru' => 'required|string',
+            'nik' => 'required|exists:warga,nik',
+            'alamat_lama' => 'required',
             'tanggal_datang' => 'required|date',
         ]);
 
-        $pendatang->update($request->all());
+        $warga = WargaModel::where('nik', $request->nik)->first();
+
+        $pendatang = PendatangModel::findOrFail($id);
+        $pendatang->update([
+            'nik' => $warga->nik,
+            'nama' => $warga->nama,
+            'alamat_lama' => $request->alamat_lama,
+            'tanggal_datang' => $request->tanggal_datang,
+        ]);
+
         return redirect()->route('admin.pendatang.index')->with('success', 'Data pendatang berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        PendatangModel::findOrFail($id)->delete();
-        return redirect()->route('admin.pendatang.index')->with('success', 'Data pendatang berhasil dihapus.');
+        $pendatang = PendatangModel::findOrFail($id);
+        $pendatang->delete();
+
+        return redirect()->back()->with('success', 'Data pendatang berhasil dihapus.');
     }
 }

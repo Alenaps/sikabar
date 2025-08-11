@@ -24,4 +24,9 @@ class PendatangModel extends Model
     {
         return $this->belongsTo(WargaModel::class, 'nik', 'nik');
     }
+    
+    public function kartu_keluarga()
+    {
+        return $this->belongsTo(KartuKeluargaModel::class, 'kartu_keluarga_id');
+    }
 }

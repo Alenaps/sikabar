@@ -90,9 +90,6 @@ class KartuKeluargaController extends Controller
             ->with('success', 'Data KK berhasil dihapus.');
     }
 
-
-    // Remove boot method from controller; move deletion logic to the model
-
     public function anggota()
     {
         return $this->hasMany(WargaModel::class, 'kartu_keluarga_id');

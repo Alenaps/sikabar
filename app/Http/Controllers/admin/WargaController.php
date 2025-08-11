@@ -44,7 +44,7 @@ class WargaController extends Controller
             'tanggal_lahir' => 'required|date',
             'agama' => 'required',
             'status_kependudukkan' => 'required',
-            'hubungan_dalam_keluarga' => 'nullable'
+            'hubungan_dalam_keluarga' => 'required|string|max:50',
         ]);
 
         WargaModel::create($validated);
@@ -63,7 +63,7 @@ class WargaController extends Controller
 
     public function update(Request $request, WargaModel $warga)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nik' => 'required|string|unique:warga,nik,' . $warga->id,
             'kartu_keluarga_id' => 'required|exists:kartu_keluarga,id',
             'nama' => 'required|string|max:255',
@@ -75,7 +75,13 @@ class WargaController extends Controller
             'hubungan_dalam_keluarga' => 'required|string|max:50',
         ]);
         
-        $warga->update($request->all());
+       // Jika nik berubah, update manual
+        if ($request->nik !== $warga->nik) {
+            // Simpan perubahan manual
+            $warga->nik = $request->nik;
+        }
+
+        $warga->fill($validated)->save();
         return redirect()->route('admin.warga.index')->with('success', 'Data warga berhasil diperbarui.');
     }
 

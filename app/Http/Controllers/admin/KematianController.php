@@ -3,16 +3,28 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\KematianModel;
 use App\Models\WargaModel;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class KematianController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $kematians = KematianModel::with('warga')->latest()->get();
-        return view('admin.kematian.index', compact('kematians'));
+        $query = KematianModel::with('warga');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('nik', 'like', "%$search%")
+                ->orWhereHas('warga', function ($q) use ($search) {
+                    $q->where('nama', 'like', "%$search%");
+                });
+        }
+        $data = KematianModel::all();
+        $kematian = $query->latest()->paginate(10); 
+        return view('admin.kematian.index', compact('kematian'));
     }
 
     public function create()
@@ -24,45 +36,43 @@ class KematianController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nik' => 'required|exists:wargas,nik|unique:kematian,nik',
-            'tanggal_meninggal' => 'required|date',
-            'penyebab' => 'required|string|max:255',
-            'tempat_meninggal' => 'required|string|max:255',
+            'nik' => 'required|exists:warga,nik',
+            'tanggal_kematian' => 'required|date',
+            'tempat_kematian' => 'required|string',
         ]);
 
-        KematianModel::create($request->all());
+        $warga = WargaModel::where('nik', $request->nik)->firstOrFail();
 
-        return redirect()->route('admin.kematian.index')->with('success', 'Data kematian berhasil ditambahkan.');
-    }
+        KematianModel::create([
+            'nik' => $warga->nik,
+            'nama' => $warga->nama,
+            'tanggal_kematian' => $request->tanggal_kematian,
+            'tempat_kematian' => $request->tempat_kematian
+        ]);
 
-    public function show($id)
-    {
-        $kematian = KematianModel::with('warga')->findOrFail($id);
-        return view('admin.kematian.show', compact('kematian'));
+        return redirect()->route('admin.kematian.index')->with('success', 'Data kematian berhasil disimpan.');
     }
 
     public function edit($id)
     {
         $kematian = KematianModel::findOrFail($id);
-        $wargas = WargaModel::all();
+        $wargas = WargaModel::all(); 
         return view('admin.kematian.edit', compact('kematian', 'wargas'));
     }
-
+    
     public function update(Request $request, $id)
     {
-        $kematian = KematianModel::findOrFail($id);
-
         $request->validate([
-            'nik' => 'required|exists:wargas,nik|unique:kematian,nik,' . $kematian->id,
-            'tanggal_meninggal' => 'required|date',
-            'penyebab' => 'required|string|max:255',
-            'tempat_meninggal' => 'required|string|max:255',
+            'nik' => 'required',
+            'tanggal_kematian' => 'required|date',
+            'tempat_kematian' => 'required|string',
         ]);
 
+        $kematian = KematianModel::findOrFail($id);
         $kematian->update($request->all());
 
         return redirect()->route('admin.kematian.index')->with('success', 'Data kematian berhasil diperbarui.');
-    }
+    } 
 
     public function destroy($id)
     {

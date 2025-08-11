@@ -9,9 +9,18 @@ use App\Models\WargaModel;
 
 class PerpindahanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $perpindahan = PerpindahanModel::with('warga')->latest()->paginate(10);
+         $perpindahan = PerpindahanModel::with('warga') 
+        ->when($request->search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nik', 'like', "%{$search}%")
+                  ->orWhere('nama', 'like', "%{$search}%");
+            });
+        })
+        ->latest()
+        ->paginate(10);
+
         return view('admin.perpindahan.index', compact('perpindahan'));
     }
 

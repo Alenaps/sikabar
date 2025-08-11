@@ -16,6 +16,14 @@
         <x-stat-card title="Total Kartu Keluarga" :value="$jumlahKartuKeluarga" color="purple" />
     </div>
 
+    {{-- Data untuk Chart --}}
+    <div id="chart-data"
+        data-labels-bulan-ini='@json(array_keys($statistikBulanIni->toArray()))'
+        data-labels-bulan-lalu='@json(array_keys($statistikBulanLalu->toArray()))'
+        data-data-bulan-ini='@json($statistikBulanIni)'
+        data-data-bulan-lalu='@json($statistikBulanLalu)'>
+    </div>
+
     {{-- Grafik Statistik --}}
     <div class="bg-white p-6 rounded-xl shadow-lg">
         <h2 class="text-lg font-semibold mb-4 text-gray-700">Perbandingan Jumlah Warga per Desa</h2>
@@ -27,28 +35,37 @@
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const el = document.getElementById('chart-data');
+
+    const labelsBulanIni = JSON.parse(el.dataset.labelsBulanIni);
+    const labelsBulanLalu = JSON.parse(el.dataset.labelsBulanLalu);
+    const dataBulanIni = JSON.parse(el.dataset.dataBulanIni);
+    const dataBulanLalu = JSON.parse(el.dataset.dataBulanLalu);
+
+    const labels = [...new Set([...labelsBulanIni, ...labelsBulanLalu])];
+
     const ctx = document.getElementById('desaChart').getContext('2d');
-
-    const labels = @json(array_keys($statistikBulanIni->toArray() + $statistikBulanLalu->toArray()));
-    const dataBulanIni = @json($statistikBulanIni);
-    const dataBulanLalu = @json($statistikBulanLalu);
-
-    const chart = new Chart(ctx, {
+    new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels,
+            labels,
             datasets: [
                 {
                     label: 'Bulan Ini',
                     backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                    data: labels.map(label => dataBulanIni[label] || 0),
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 1,
+                    data: labels.map(label => dataBulanIni[label] || 0)
                 },
                 {
                     label: 'Bulan Lalu',
                     backgroundColor: 'rgba(16, 185, 129, 0.7)',
-                    data: labels.map(label => dataBulanLalu[label] || 0),
-                },
-            ],
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    borderWidth: 1,
+                    data: labels.map(label => dataBulanLalu[label] || 0)
+                }
+            ]
         },
         options: {
             responsive: true,
@@ -56,10 +73,11 @@
                 legend: { position: 'top' },
                 title: {
                     display: true,
-                    text: 'Statistik Warga Bulanan per Desa',
-                },
-            },
-        },
+                    text: 'Perbandingan Jumlah Penduduk per Desa'
+                }
+            }
+        }
     });
+});
 </script>
 @endsection

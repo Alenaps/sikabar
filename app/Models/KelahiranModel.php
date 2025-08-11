@@ -30,7 +30,7 @@ class KelahiranModel extends Model
         return $this->belongsTo(WargaModel::class, 'nik_ibu', 'nik');
     }
 
-    public function kartuKeluarga()
+    public function kartu_keluarga()
     {
         return $this->belongsTo(KartuKeluargaModel::class, 'no_kk', 'no_kk');
     }

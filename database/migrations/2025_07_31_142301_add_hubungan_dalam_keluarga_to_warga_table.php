@@ -9,18 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+public function up(): void
 {
     Schema::table('warga', function (Blueprint $table) {
-        $table->string('no_kk')->nullable()->after('nik');
+        $table->string('hubungan_dalam_keluarga')->nullable();
     });
 }
 
 public function down(): void
 {
     Schema::table('warga', function (Blueprint $table) {
-        $table->dropColumn('no_kk');
+        $table->dropColumn('hubungan_dalam_keluarga');
     });
 }
-
 };

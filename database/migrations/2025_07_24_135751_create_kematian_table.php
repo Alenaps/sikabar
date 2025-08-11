@@ -14,8 +14,9 @@ return new class extends Migration
        Schema::create('kematian', function (Blueprint $table) {
     $table->id();
     $table->string('nik');
-    $table->date('tanggal_meninggal');
-    $table->string('tempat_meninggal');
+    $table->string('nama');
+    $table->date('tanggal_kematian');
+    $table->string('tempat_kematian');
     $table->timestamps();
 
     $table->foreign('nik')->references('nik')->on('warga')->onDelete('cascade');

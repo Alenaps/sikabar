@@ -19,10 +19,10 @@
         <a href="{{ route('admin.kartukeluarga.create') }}" class="bg-green-500 text-white px-4 py-2 rounded">+ Tambah KK</a>
     </div>
 
-    <div class="overflow-x-auto">
-        <table class="w-full table-auto border-collapse border border-gray-300">
-            <thead class="bg-gray-100">
-                <tr>
+    <div class="overflow-auto bg-gray-100 rounded shadow">
+    <table class="min-w-full text-xs text-left">
+        <thead>
+            <tr class="bg-cyan-700 text-white">
                     <th class="border px-4 py-2">No</th>
                     <th class="border px-4 py-2">No KK</th>
                     <th class="border px-4 py-2">Alamat</th>
@@ -34,16 +34,17 @@
             <tbody>
                 @forelse ($kartu_keluarga as $kk)
                     <tr>
-                        <td class="border px-4 py-2">{{ $kk->id }}</td>
+                        <td class="border px-4 py-2">{{ $loop->iteration }}</td>
                         <td class="border px-4 py-2">{{ $kk->no_kk }}</td>
                         <td class="border px-4 py-2">{{ $kk->alamat }}</td>
                         <td class="border px-4 py-2">{{ $kk->desa }}</td>
                         <td class="border px-4 py-2">{{ $kk->anggota->count() }} anggota</td>
-                        <td class="border px-4 py-2 space-x-2">
-                            <a href="{{ route('admin.kartukeluarga.edit', $kk->id) }}" class="text-blue-500">Edit</a>
-                            <form action="{{ route('admin.kartukeluarga.destroy', $kk->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="text-red-500">Hapus</button>
+                        <td class="px-4 py-2 border space-x-1">
+                            <a href="{{ route('admin.kartukeluarga.edit', $kk->id) }}" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-sm">Edit</a>
+                            <form action="{{ route('admin.kartukeluarga.destroy', $kk->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Hapus</button>
                             </form>
                         </td>
                     </tr>

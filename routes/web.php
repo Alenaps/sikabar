@@ -33,7 +33,7 @@ use App\Models\User;
 
 // Halaman Awal
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth/login');
 });
 
 // Auth Routes (Login, Register, etc.)
@@ -54,7 +54,7 @@ Route::get('/redirect-by-role', function () {
 })->middleware('auth');
 
 
-// ROUTE UNTUK USER (SEKDES)
+// ROUTE UNTUK USER 
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/beranda', [UserBerandaController::class, 'index'])->name('beranda');
 
@@ -64,9 +64,23 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
     Route::resource('pendatang', UserPendatangController::class);
     Route::resource('kelahiran', UserKelahiranController::class);
     Route::resource('kematian', UserKematianController::class);
+
+    Route::get('warga/export/pdf', [UserWargaController::class, 'exportPdfWithKop'])->name('warga.exportPdf');
+    Route::get('warga/export/excel', [UserWargaController::class, 'exportExcelWithKop'])->name('warga.exportExcel');
+    Route::get('kartukeluarga/export/pdf', [UserKartuKeluargaController::class, 'exportPdfWithKop'])->name('kartukeluarga.exportPdf');
+    Route::get('kartukeluarga/export/excel', [UserKartuKeluargaController::class, 'exportExcelWithKop'])->name('kartukeluarga.exportExcel');
+    Route::get('perpindahan/export/pdf', [UserPerpindahanController::class, 'exportPdfWithKop'])->name('perpindahan.exportPdf');
+    Route::get('perpindahan/export/excel', [UserPerpindahanController::class, 'exportExcelWithKop'])->name('perpindahan.exportExcel');
+    Route::get('pendatang/export/pdf', [UserPendatangController::class, 'exportPdfWithKop'])->name('pendatang.exportPdf');
+    Route::get('pendatang/export/excel', [UserPendatangController::class, 'exportExcelWithKop'])->name('pendatang.exportExcel');
+    Route::get('kelahiran/export/pdf', [UserKelahiranController::class, 'exportPdfWithKop'])->name('kelahiran.exportPdf');
+    Route::get('kelahiran/export/excel', [UserKelahiranController::class, 'exportExcelWithKop'])->name('kelahiran.exportExcel');
+    Route::get('kematian/export/pdf', [UserKematianController::class, 'exportPdfWithKop'])->name('kematian.exportPdf');
+    Route::get('kematian/export/excel', [UserKematianController::class, 'exportExcelWithKop'])->name('kematian.exportExcel');
+    
 });
 
-// ROUTE UNTUK ADMIN (KADES)
+// ROUTE UNTUK ADMIN 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/beranda', [AdminBerandaController::class, 'index'])->name('beranda');
 

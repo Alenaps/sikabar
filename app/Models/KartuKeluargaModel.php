@@ -31,8 +31,15 @@ class KartuKeluargaModel extends Model
     
     public function anggota()
     {
-        return $this->hasMany(WargaModel::class, 'kartu_keluarga_id', 'id');
+        return $this->hasMany(WargaModel::class, 'kartu_keluarga_id');
     }
+
+    public function kepalaKeluarga()
+    {
+        return $this->hasOne(WargaModel::class, 'kartu_keluarga_id', 'id')
+                    ->where('hubungan_dalam_keluarga', 'Kepala Keluarga');
+    }
+
 
 }
 

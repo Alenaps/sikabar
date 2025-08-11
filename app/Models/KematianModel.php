@@ -13,12 +13,18 @@ class KematianModel extends Model
 
     protected $fillable = [
         'nik',
+        'nama',
         'tanggal_kematian',
         'tempat_kematian',
     ];
 
     public function warga()
     {
-        return $this->belongsTo(WargaModel::class, 'nik', 'nik');
+        return $this->belongsTo(WargaModel::class, 'nik', 'nik')->withTrashed(); 
+    }
+
+    public function kartu_keluarga()
+    {
+        return $this->belongsTo(KartuKeluargaModel::class, 'kartu_keluarga_id');
     }
 }

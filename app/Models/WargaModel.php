@@ -34,7 +34,7 @@ class WargaModel extends Model
     // Relasi dengan Kartu Keluarga
     public function kartu_keluarga()
     {
-        return $this->belongsTo(KartuKeluargaModel::class, 'kartu_keluarga_id', 'id');
+        return $this->belongsTo(KartuKeluargaModel::class, 'kartu_keluarga_id');
     }
 
     // Relasi dengan Pendatang
@@ -70,6 +70,42 @@ class WargaModel extends Model
         return 'nik';
     }
 
+    public function scopeFilter($query, $request)
+    {
+        if ($request->filled('cari')) {
+            $cari = $request->cari;
+            $query->where(function ($q) use ($cari) {
+                $q->where('nik', 'like', "%$cari%")
+                ->orWhere('nama', 'like', "%$cari%");
+            });
+        }
+
+        if ($request->filled('bulan')) {
+            $query->whereMonth('tanggal_lahir', $request->bulan);
+        }
+
+        if ($request->filled('desa')) {
+            $query->whereHas('kartu_keluarga', function ($q) use ($request) {
+                $q->where('desa', $request->desa);
+            });
+        }
+
+        if ($request->filled('jenis_kelamin')) {
+            $query->where('jenis_kelamin', $request->jenis_kelamin);
+        }
+
+        if ($request->filled('usia_min')) {
+            $min = now()->subYears($request->usia_min)->startOfYear();
+            $query->where('tanggal_lahir', '<=', $min);
+        }
+
+        if ($request->filled('usia_max')) {
+            $max = now()->subYears($request->usia_max)->endOfYear();
+            $query->where('tanggal_lahir', '>=', $max);
+        }
+
+        return $query;
+    }
 
 }
 
