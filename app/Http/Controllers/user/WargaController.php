@@ -247,11 +247,11 @@ class WargaController extends Controller
         $tanggal = Carbon::now()->translatedFormat('d F Y');
         $sheet->mergeCells("J$ttdRow:K$ttdRow")->setCellValue("J$ttdRow", 'Bandar Sribhawono, ' . $tanggal);
         $sheet->mergeCells("J" . ($ttdRow + 1) . ":K" . ($ttdRow + 1))->setCellValue("J" . ($ttdRow + 1), 'Sekretaris Camat Bandar Sribhawono');
-        $sheet->mergeCells("J" . ($ttdRow + 4) . ":K" . ($ttdRow + 4))->setCellValue("J" . ($ttdRow + 4), 'Aliando, S.E., M.M');
-        $sheet->mergeCells("J" . ($ttdRow + 5) . ":K" . ($ttdRow + 5))->setCellValue("J" . ($ttdRow + 5), 'NIP. 198411062010011009');
+        $sheet->mergeCells("J" . ($ttdRow + 5) . ":K" . ($ttdRow + 5))->setCellValue("J" . ($ttdRow + 5), 'Aliando, S.E., M.M');
+        $sheet->mergeCells("J" . ($ttdRow + 6) . ":K" . ($ttdRow + 6))->setCellValue("J" . ($ttdRow + 6), 'NIP. 198411062010011009');
 
         // Bold tanda tangan
-        $sheet->getStyle("J$ttdRow:J" . ($ttdRow + 5))->getFont()->setBold(true);
+        $sheet->getStyle("J$ttdRow:J" . ($ttdRow + 6))->getFont()->setBold(true);
 
         // Output Excel
         $writer = new Xlsx($spreadsheet);

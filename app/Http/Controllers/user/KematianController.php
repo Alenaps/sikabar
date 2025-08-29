@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\KematianModel;
 use TCPDF;
 use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 class kematianController extends Controller
 {
@@ -171,5 +177,100 @@ class kematianController extends Controller
         $pdf->Output('laporan_data_kematian.pdf', 'I');
     }
 
+    public function exportExcelWithKop()
+    {
+        $kematian = KematianModel::with('warga.kartu_keluarga')->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Logo 
+        $logo = new Drawing();
+        $logo->setName('Logo Kecamatan');
+        $logo->setDescription('Logo');
+        $logo->setPath(public_path('assets/img/kec.png')); 
+        $logo->setHeight(73);
+        $logo->setCoordinates('A1');
+        $logo->setOffsetX(10);
+        $logo->setOffsetY(5);
+        $logo->setWorksheet($sheet);
+
+        // Kop surat 
+        $sheet->mergeCells('A1:L1')->setCellValue('A1', 'PEMERINTAH KABUPATEN LAMPUNG TIMUR');
+        $sheet->mergeCells('A2:L2')->setCellValue('A2', 'KECAMATAN BANDAR SRIBHAWONO');
+        $sheet->mergeCells('A3:L3')->setCellValue('A3', 'Jl. Ir. Sutami Km 58 Sribhawono, Kode Pos 34199');
+        $sheet->mergeCells('A5:L5')->setCellValue('A5', 'LAPORAN DATA KEMATIAN');
+
+        for ($i = 1; $i <= 5; $i++) {
+            $sheet->getStyle("A$i")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("A$i")->getFont()->setBold(true)->setSize(12);
+        }
+
+        // Header tabel 
+        $header = [
+            'No', 'NIK', 'No KK', 'Nama', 'Jenis Kelamin', 
+            'Tempat Lahir', 'Tanggal Lahir', 'Desa', 'Alamat', 
+            'Status Kependudukan', 'Tanggal Kematian', 'Tempat Kematian'
+        ];
+        $sheet->fromArray($header, NULL, 'A7');
+
+        // Style header tabel
+        $sheet->getStyle('A7:L7')->getFont()->setBold(true);
+        $sheet->getStyle('A7:L7')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Data tabel 
+        $row = 8;
+        $no = 1;
+        foreach ($kematian as $k) {
+            $w = $k->warga;
+            $kk = $w->kartu_keluarga ?? null;
+
+            $sheet->setCellValue("A{$row}", $no++);
+            $sheet->setCellValueExplicit("B{$row}", $w->nik ?? '-', DataType::TYPE_STRING);
+            $sheet->setCellValueExplicit("C{$row}", $kk->no_kk ?? '-', DataType::TYPE_STRING);
+            $sheet->setCellValue("D{$row}", $w->nama ?? '-');
+            $sheet->setCellValue("E{$row}", $w->jenis_kelamin ?? '-');
+            $sheet->setCellValue("F{$row}", $w->tempat_lahir ?? '-');
+            $sheet->setCellValue("G{$row}", $w->tanggal_lahir ? Carbon::parse($w->tanggal_lahir)->format('d-m-Y') : '-');
+            $sheet->setCellValue("H{$row}", $kk->desa ?? '-');
+            $sheet->setCellValue("I{$row}", $kk->alamat ?? '-');
+            $sheet->setCellValue("J{$row}", $w->status_kependudukkan ?? '-');
+            $sheet->setCellValue("K{$row}", $k->tanggal_kematian ? Carbon::parse($k->tanggal_kematian)->format('d-m-Y') : '-');
+            $sheet->setCellValue("L{$row}", $k->tempat_kematian ?? '-');
+            $row++;
+        }
+
+        // Border tabel 
+        $sheet->getStyle("A7:L" . ($row - 1))
+            ->getBorders()
+            ->getAllBorders()
+            ->setBorderStyle(Border::BORDER_THIN);
+
+        // Lebar kolom otomatis 
+        foreach (range('A', 'L') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // Tanda tangan
+        $ttdRow = $row + 2;
+        Carbon::setLocale('id');
+        $tanggal = Carbon::now()->translatedFormat('d F Y');
+        $sheet->mergeCells("J$ttdRow:L$ttdRow")->setCellValue("J$ttdRow", 'Bandar Sribhawono, ' . $tanggal);
+        $sheet->mergeCells("J" . ($ttdRow + 1) . ":L" . ($ttdRow + 1))->setCellValue("J" . ($ttdRow + 1), 'Sekretaris Camat Bandar Sribhawono');
+        $sheet->mergeCells("J" . ($ttdRow + 5) . ":L" . ($ttdRow + 5))->setCellValue("J" . ($ttdRow + 5), 'Aliando, S.E., M.M');
+        $sheet->mergeCells("J" . ($ttdRow + 6) . ":L" . ($ttdRow + 6))->setCellValue("J" . ($ttdRow + 6), 'NIP. 198411062010011009');
+
+        $sheet->getStyle("J$ttdRow:J" . ($ttdRow + 6))->getFont()->setBold(true);
+
+        // Output Excel
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'Laporan_Data_Kematian.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+        exit;
+    }
 
 }

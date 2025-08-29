@@ -20,7 +20,7 @@ class KematianModel extends Model
 
     public function warga()
     {
-        return $this->belongsTo(WargaModel::class, 'nik', 'nik')->withTrashed(); 
+        return $this->belongsTo(WargaModel::class, 'nik', 'nik'); 
     }
 
     public function kartu_keluarga()

@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="p-4">
-    <h1 class="text-2xl font-bold mb-4">Edit Data Kematian</h1>
+<div class="max-w-xl mx-auto p-4">
+    <h2 class="text-xl font-bold mb-4">Edit Data Kematian</h1>
 
     @if ($errors->any())
         <div class="bg-red-100 text-red-700 p-3 mb-4 rounded">

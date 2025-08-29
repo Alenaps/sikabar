@@ -8,6 +8,11 @@ use App\Models\KartuKeluargaModel;
 use TCPDF;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class KartuKeluargaController extends Controller
 {
@@ -146,5 +151,95 @@ class KartuKeluargaController extends Controller
         $pdf->Output('laporan_data_KartuKeluarga.pdf', 'I');
     }
 
-    
+    public function exportExcelWithKOP()
+    {
+        $kks = KartuKeluargaModel::with('warga')->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Logo 
+        $logo = new Drawing();
+        $logo->setName('Logo Kecamatan');
+        $logo->setDescription('Logo');
+        $logo->setPath(public_path('assets/img/kec.png')); 
+        $logo->setHeight(73);
+        $logo->setCoordinates('A1');
+        $logo->setOffsetX(10);
+        $logo->setOffsetY(5);
+        $logo->setWorksheet($sheet);
+
+        // Kop surat 
+        $sheet->mergeCells('A1:F1')->setCellValue('A1', 'PEMERINTAH KABUPATEN LAMPUNG TIMUR');
+        $sheet->mergeCells('A2:F2')->setCellValue('A2', 'KECAMATAN BANDAR SRIBHAWONO');
+        $sheet->mergeCells('A3:F3')->setCellValue('A3', 'Jl. Ir. Sutami Km 58 Sribhawono, Kode Pos 34199');
+        $sheet->mergeCells('A5:F5')->setCellValue('A5', 'LAPORAN DATA KARTU KELUARGA');
+
+        for ($i = 1; $i <= 5; $i++) {
+            $sheet->getStyle("A$i")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("A$i")->getFont()->setBold(true)->setSize(12);
+        }
+
+        // Header tabel 
+        $header = ['No', 'No KK', 'Kepala Keluarga', 'Jumlah Anggota', 'Alamat', 'Desa'];
+        $sheet->fromArray($header, NULL, 'A7');
+
+        // Style header tabel
+        $sheet->getStyle('A7:F7')->getFont()->setBold(true);
+        $sheet->getStyle('A7:F7')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Data tabel 
+        $row = 8;
+        $no = 1;
+        foreach ($kks as $kk) {
+            // Cari kepala keluarga (relasi ke WargaModel)
+            $kepalaKeluarga = $kk->warga->where('hubungan_dalam_keluarga', 'Kepala Keluarga')->first();
+            $namaKepala = $kepalaKeluarga->nama ?? '-';
+
+            // Hitung jumlah anggota
+            $jumlahAnggota = $kk->warga->count();
+
+            $sheet->setCellValue("A{$row}", $no++);
+            $sheet->setCellValueExplicit("B{$row}", $kk->no_kk, DataType::TYPE_STRING);
+            $sheet->setCellValue("C{$row}", $namaKepala);
+            $sheet->setCellValue("D{$row}", $jumlahAnggota);
+            $sheet->setCellValue("E{$row}", $kk->alamat);
+            $sheet->setCellValue("F{$row}", $kk->desa);
+            $row++;
+        }
+
+        // Border tabel 
+        $sheet->getStyle("A7:F" . ($row - 1))
+            ->getBorders()
+            ->getAllBorders()
+            ->setBorderStyle(Border::BORDER_THIN);
+
+        // Lebar kolom otomatis 
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // Tanda tangan
+        $ttdRow = $row + 2;
+        Carbon::setLocale('id');
+        $tanggal = Carbon::now()->translatedFormat('d F Y');
+        $sheet->mergeCells("E$ttdRow:F$ttdRow")->setCellValue("E$ttdRow", 'Bandar Sribhawono, ' . $tanggal);
+        $sheet->mergeCells("E" . ($ttdRow + 1) . ":F" . ($ttdRow + 1))->setCellValue("E" . ($ttdRow + 1), 'Sekretaris Camat Bandar Sribhawono');
+        $sheet->mergeCells("E" . ($ttdRow + 5) . ":F" . ($ttdRow + 5))->setCellValue("E" . ($ttdRow + 5), 'Aliando, S.E., M.M');
+        $sheet->mergeCells("E" . ($ttdRow + 6) . ":F" . ($ttdRow + 6))->setCellValue("E" . ($ttdRow + 6), 'NIP. 198411062010011009');
+
+        // Bold tanda tangan
+        $sheet->getStyle("E$ttdRow:E" . ($ttdRow + 6))->getFont()->setBold(true);
+
+        // Output Excel
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'Laporan_Data_Kartu_Keluarga.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+        exit;
+    }
+
 }

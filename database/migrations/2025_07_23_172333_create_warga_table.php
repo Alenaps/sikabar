@@ -19,7 +19,7 @@ return new class extends Migration
     $table->date('tanggal_lahir');
     $table->string('tempat_lahir');
     $table->string('agama');
-    $table->enum('status_kependudukkan', ['Warga', 'Pendatang', 'Pindah', 'Kematian', 'Kelahiran']);
+    $table->enum('status_kependudukkan', ['Warga', 'Pendatang', 'Perpindahan', 'Kematian', 'Kelahiran']);
     $table->timestamps();
 
     $table->foreignId('kartu_keluarga_id')->constrained('kartu_keluarga')->onDelete('cascade');

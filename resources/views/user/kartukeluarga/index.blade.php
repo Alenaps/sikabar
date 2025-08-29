@@ -57,6 +57,7 @@
                         <th class="border px-2 py-1">No</th>
                         <th class="border p-3 ">No KK</th>
                         <th class="border p-3 ">Kepala Keluarga</th>
+                        <th class="border p-3 ">Jumlah Anggota</th>
                         <th class="border p-3 ">Alamat</th>
                         <th class="border p-3 ">Desa</th>
                     </tr>
@@ -67,6 +68,9 @@
                             <td class="border px-2 py-1">{{ $loop->iteration }}</td>
                             <td class="border p-3">{{ $kk->no_kk }}</td>
                             <td class="border p-3">{{ $kk->kepalaKeluarga->nama ?? '-' }}</td>
+                            <td class="border p-3">
+                                {{ $kk->anggota->count() }}
+                            </td>
                             <td class="border p-3">{{ $kk->alamat }}</td>
                             <td class="border p-3">{{ $kk->desa }}</td>
                         </tr>
