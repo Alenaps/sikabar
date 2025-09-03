@@ -10,7 +10,8 @@ class KartuKeluargaModel extends Model
      use HasFactory;
 
      protected $table = 'kartu_keluarga';
-     public $incrementing = false;
+     protected $primaryKey = 'id';
+     public $incrementing = true;
      protected $keyType = 'string';
 
     protected $fillable = [

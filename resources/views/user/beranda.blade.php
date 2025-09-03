@@ -25,9 +25,21 @@
     </div>
 
     {{-- Grafik Statistik --}}
-    <div class="bg-white p-6 rounded-xl shadow-lg">
-        <h2 class="text-lg font-semibold mb-4 text-gray-700">Perbandingan Jumlah Warga per Desa</h2>
-        <canvas id="desaChart" height="100"></canvas>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-lg font-semibold mb-4 text-gray-700">Perbandingan Jumlah Warga per Desa</h2>
+            <canvas id="desaChart" height="120"></canvas>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-lg font-semibold mb-4 text-gray-700">Komposisi Jenis Kelamin</h2>
+            <canvas id="chartGender" height="120"></canvas>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg lg:col-span-2">
+            <h2 class="text-lg font-semibold mb-4 text-gray-700">Distribusi Kelompok Usia</h2>
+            <canvas id="chartUsia" height="100"></canvas>
+        </div>
     </div>
 </div>
 @endsection
@@ -45,24 +57,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const labels = [...new Set([...labelsBulanIni, ...labelsBulanLalu])];
 
-    const ctx = document.getElementById('desaChart').getContext('2d');
-    new Chart(ctx, {
+    // Chart: Desa
+    new Chart(document.getElementById('desaChart'), {
         type: 'bar',
         data: {
             labels,
             datasets: [
                 {
                     label: 'Bulan Ini',
-                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                    borderColor: 'rgba(59, 130, 246, 1)',
-                    borderWidth: 1,
+                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                    borderRadius: 6,
                     data: labels.map(label => dataBulanIni[label] || 0)
                 },
                 {
                     label: 'Bulan Lalu',
-                    backgroundColor: 'rgba(16, 185, 129, 0.7)',
-                    borderColor: 'rgba(16, 185, 129, 1)',
-                    borderWidth: 1,
+                    backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                    borderRadius: 6,
                     data: labels.map(label => dataBulanLalu[label] || 0)
                 }
             ]
@@ -70,10 +80,80 @@ document.addEventListener("DOMContentLoaded", function () {
         options: {
             responsive: true,
             plugins: {
-                legend: { position: 'top' },
-                title: {
-                    display: true,
-                    text: 'Perbandingan Jumlah Penduduk per Desa'
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: context => context.dataset.label + ': ' + (context.raw || 0).toLocaleString("id-ID")
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => Number.isInteger(value) ? value.toLocaleString("id-ID") : null
+                    }
+                }
+            }
+        }
+    });
+
+    // Data Gender & Usia
+    const dataUsia = JSON.parse('@json($dataUsia)');
+    const dataGender = JSON.parse('@json($dataGender)');
+
+
+    // Chart: Gender
+    new Chart(document.getElementById('chartGender'), {
+        type: 'doughnut',
+        data: {
+            labels: dataGender.labels,
+            datasets: [{
+                data: dataGender.counts,
+                backgroundColor: ['#3B82F6', '#F472B6'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: context => context.label + ': ' + context.raw.toLocaleString("id-ID")
+                    }
+                }
+            }
+        }
+    });
+
+    // Chart: Usia
+    new Chart(document.getElementById('chartUsia'), {
+        type: 'bar',
+        data: {
+            labels: dataUsia.labels,
+            datasets: [{
+                label: 'Jumlah',
+                data: dataUsia.counts,
+                backgroundColor: 'rgba(139, 92, 246, 0.8)',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: context => context.dataset.label + ': ' + context.raw.toLocaleString("id-ID")
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => Number.isInteger(value) ? value.toLocaleString("id-ID") : null
+                    }
                 }
             }
         }

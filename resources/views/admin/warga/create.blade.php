@@ -61,7 +61,15 @@
 
             <div>
                 <label class="block font-medium mb-1">Agama</label>
-                <input type="text" name="agama" class="w-full border border-gray-500 rounded h-11 px-3" required>
+                 <select name="agama" class="w-full border border-gray-500 rounded h-11 px-3">
+                        <option value="">-- Pilih --</option>
+                        <option value="ISLAM">ISLAM</option>
+                        <option value="PROTESTAN">PROTESTAN</option>
+                        <option value="KATOLIK">KATOLIK</option>
+                        <option value="HINDU">HINDU</option>
+                        <option value="BUDHA">BUDHA</option>
+                        <option value="KONGHUCU">KONGHUCU</option>
+                </select>
             </div>
 
             <div>

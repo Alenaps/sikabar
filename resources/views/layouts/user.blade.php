@@ -71,6 +71,7 @@
   <!-- MAIN CONTENT -->
   <main class="flex-1 p-4 md:p-10 bg-white">
     @yield('content')
+    @yield('scripts')
   </main>
 </div>
 

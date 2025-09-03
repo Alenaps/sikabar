@@ -19,7 +19,7 @@ return new class extends Migration
         $table->date('tanggal_pindah');
         $table->timestamps();
 
-        $table->foreign('nik')->references('nik')->on('warga')->onDelete('cascade');
+        $table->foreign('nik')->references('nik')->on('warga');
         });
 
 

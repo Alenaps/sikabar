@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PendatangModel;
 use App\Models\WargaModel;
+use App\Models\KartuKeluargaModel;
 
 class PendatangController extends Controller
 {
@@ -33,16 +34,51 @@ class PendatangController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nik' => 'required|exists:warga,nik',
-            'alamat_lama' => 'required',
+            // KK
+            'no_kk' => 'required|string',
+            'alamat' => 'required|string',
+            'desa' => 'required|string',
+            // Warga
+            'nik' => 'required|unique:warga,nik',
+            'nama' => 'required|string',
+            'jenis_kelamin' => 'required|in:L,P',
+            'tanggal_lahir' => 'required|date',
+            'tempat_lahir' => 'required|string',
+            'agama' => 'required|string',
+            'hubungan_dalam_keluarga' => 'required|string',
+            // Pendatang
+            'alamat_lama' => 'required|string',
             'tanggal_datang' => 'required|date',
         ]);
 
-        $warga = WargaModel::where('nik', $request->nik)->first();
+        // 1. Simpan/Update KK
+        $kk = KartuKeluargaModel::updateOrCreate(
+            ['no_kk' => $request->no_kk],
+            ['alamat' => $request->alamat, 'desa' => $request->desa]
+        );
 
-        pendatangModel::create([
+        // Cek apakah ID ada
+        if (!$kk->id) {
+            dd('KK tidak berhasil tersimpan', $kk);
+        }
+
+        // 2. Simpan Warga
+        $warga = WargaModel::create([
+            'nik' => $request->nik,
+            'nama' => $request->nama,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'tempat_lahir' => $request->tempat_lahir,
+            'agama' => $request->agama,
+            'hubungan_dalam_keluarga' => $request->hubungan_dalam_keluarga,
+            'status_kependudukkan' => 'Pendatang',
+            'kartu_keluarga_id' => $kk->id,
+        ]);
+
+        // 3. Simpan Pendatang
+        PendatangModel::create([
+            //'warga_id' => $warga->id,
             'nik' => $warga->nik,
-            'nama' => $warga->nama,
             'alamat_lama' => $request->alamat_lama,
             'tanggal_datang' => $request->tanggal_datang,
         ]);
@@ -50,30 +86,22 @@ class PendatangController extends Controller
         return redirect()->route('admin.pendatang.index')->with('success', 'Data pendatang berhasil ditambahkan.');
     }
 
-    public function edit($id)
+    public function edit(PendatangModel $pendatang)
     {
-        $pendatang = PendatangModel::findOrFail($id);
-        $wargas = WargaModel::all();
-        return view('admin.pendatang.edit', compact('pendatang', 'wargas'));
+        $pendatang->load('warga.kartu_keluarga');
+        $kartuKeluarga = KartuKeluargaModel::all();
+
+        return view('admin.pendatang.edit', compact('pendatang', 'kartuKeluarga'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, PendatangModel $pendatang)
     {
         $request->validate([
-            'nik' => 'required|exists:warga,nik',
-            'alamat_lama' => 'required',
+            'alamat_lama' => 'required|string',
             'tanggal_datang' => 'required|date',
         ]);
 
-        $warga = WargaModel::where('nik', $request->nik)->first();
-
-        $pendatang = PendatangModel::findOrFail($id);
-        $pendatang->update([
-            'nik' => $warga->nik,
-            'nama' => $warga->nama,
-            'alamat_lama' => $request->alamat_lama,
-            'tanggal_datang' => $request->tanggal_datang,
-        ]);
+        $pendatang->update($request->only('alamat_lama', 'tanggal_datang'));
 
         return redirect()->route('admin.pendatang.index')->with('success', 'Data pendatang berhasil diperbarui.');
     }

@@ -19,7 +19,16 @@
 
         <div>
             <label for="desa" class="block font-medium">Desa</label>
-            <input type="text" name="desa" id="desa" class="w-full border rounded p-2 border-gray-500 rounded" required>
+            <select name="desa" class="w-full border border-gray-500 rounded h-11 px-3">
+                    <option value="">-- Pilih --</option>
+                    <option value="BANDAR AGUNG">BANDAR AGUNG</option>
+                    <option value="SRIBHAWONO">SRIBHAWONO</option>
+                    <option value="SRIMENANTI">SRIMENANTI</option>
+                    <option value="SRIPENDOWO">SRIPENDOWO</option>
+                    <option value="SADAR SRIWIJAYA">SADAR SRIWIJAYA</option>
+                    <option value="MEKAR JAYA">MEKAR JAYA</option>
+                    <option value="WARINGIN JAYA">WARINGIN JAYA</option>
+            </select>
         </div>
 
         <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>

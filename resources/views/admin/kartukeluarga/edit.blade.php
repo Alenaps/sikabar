@@ -34,14 +34,16 @@
 
         <div>
             <label for="desa" class="block font-medium">Desa</label>
-            <input 
-                type="text" 
-                name="desa" 
-                id="desa" 
-                value="{{ old('desa', $kartu_keluarga->desa) }}" 
-                class="w-full border border-gray-500 rounded p-2" 
-                required
-            >
+            <select name="desa" class="w-full border border-gray-500 rounded h-11 px-3">
+              <option value="">-- Pilih --</option>
+                        <option value="BANDAR AGUNG" {{ $kartu_keluarga->desa == 'BANDAR AGUNG' ? 'selected' : '' }}>BANDAR AGUNG</option>
+                        <option value="SRIBHAWONO" {{ $kartu_keluarga->desa == 'SRIBHAWONO' ? 'selected' : '' }}>SRIBHAWONO</option>
+                        <option value="SRIMENANTI" {{ $kartu_keluarga->desa == 'SRIMENANTI' ? 'selected' : '' }}>SRIMENANTI</option>
+                        <option value="SRIPENDOWO" {{ $kartu_keluarga->desa == 'SRIPENDOWO' ? 'selected' : '' }}>SRIPENDOWO</option>
+                        <option value="SADAR SRIWIJAYA" {{ $kartu_keluarga->desa == 'SADAR SRIWIJAYA' ? 'selected' : '' }}>SADAR SRIWIJAYA</option>
+                        <option value="MEKAR JAYA" {{ $kartu_keluarga->desa == 'MEKAR JAYA' ? 'selected' : '' }}>MEKAR JAYA</option>
+                        <option value="WARINGIN JAYA" {{ $kartu_keluarga->desa == 'WARINGIN JAYA' ? 'selected' : '' }}>WARINGIN JAYA</option>          
+            </select>
         </div>
 
         <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Update</button>

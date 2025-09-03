@@ -34,22 +34,33 @@ class PerpindahanController extends Controller
     {
         $request->validate([
             'nik' => 'required|exists:warga,nik',
-            'alamat_baru' => 'required',
+            'alamat_baru' => 'required|string',
             'tanggal_pindah' => 'required|date',
         ]);
 
+        // Cari data warga berdasarkan NIK
         $warga = WargaModel::where('nik', $request->nik)->first();
 
-        PerpindahanModel::create([
-            'nik' => $warga->nik,
-            'nama' => $warga->nama,
-            'alamat_baru' => $request->alamat_baru,
-            'tanggal_pindah' => $request->tanggal_pindah,
-        ]);
+        if ($warga) {
+            // Simpan data perpindahan
+            PerpindahanModel::create([
+                'nik' => $warga->nik,
+                'nama' => $warga->nama,
+                'alamat_baru' => $request->alamat_baru,
+                'tanggal_pindah' => $request->tanggal_pindah,
+            ]);
 
-        return redirect()->route('admin.perpindahan.index')->with('success', 'Data perpindahan berhasil ditambahkan.');
+            // Update status kependudukan warga jadi "Perpindahan"
+            $warga->update([
+                'status_kependudukkan' => 'Perpindahan'
+            ]);
+
+            return redirect()->route('admin.perpindahan.index')
+                ->with('success', 'Data perpindahan berhasil ditambahkan dan status warga diperbarui.');
+        }
+
+        return back()->with('error', 'NIK tidak ditemukan di data warga.');
     }
-
     public function edit($id)
     {
         $perpindahan = PerpindahanModel::findOrFail($id);

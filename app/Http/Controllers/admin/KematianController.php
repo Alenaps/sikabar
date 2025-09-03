@@ -35,22 +35,34 @@ class KematianController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nik' => 'required|exists:warga,nik',
             'tanggal_kematian' => 'required|date',
             'tempat_kematian' => 'required|string',
         ]);
 
-        $warga = WargaModel::where('nik', $request->nik)->firstOrFail();
+        // Ambil data warga
+        $warga = WargaModel::where('nik', $validated['nik'])->first();
 
-        KematianModel::create([
-            'nik' => $warga->nik,
-            'nama' => $warga->nama,
-            'tanggal_kematian' => $request->tanggal_kematian,
-            'tempat_kematian' => $request->tempat_kematian
-        ]);
+        if ($warga) {
+            // Simpan data kematian
+            KematianModel::create([
+                'nik' => $warga->nik,
+                'nama' => $warga->nama,
+                'tanggal_kematian' => $validated['tanggal_kematian'],
+                'tempat_kematian' => $validated['tempat_kematian'],
+            ]);
 
-        return redirect()->route('admin.kematian.index')->with('success', 'Data kematian berhasil disimpan.');
+            // Update status kependudukan warga
+            $warga->update([
+                'status_kependudukkan' => 'Kematian'
+            ]);
+
+            return redirect()->route('admin.kematian.index')
+                ->with('success', 'Data kematian berhasil ditambahkan, status warga diperbarui');
+        }
+
+        return back()->with('error', 'NIK tidak ditemukan di data warga');
     }
 
     public function edit($id)

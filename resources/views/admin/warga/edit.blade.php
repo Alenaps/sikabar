@@ -60,7 +60,15 @@
 
             <div>
                 <label class="block font-medium mb-1">Agama</label>
-                <input type="text" name="agama" value="{{ $warga->agama }}" class="w-full border border-gray-500 rounded h-11 px-3" required>
+                <select name="agama" class="w-full border border-gray-500 rounded h-11 px-3">
+                        <option value="">-- Pilih --</option>
+                        <option value="ISLAM" {{ $warga->agama == 'ISLAM' ? 'selected' : '' }}>ISLAM</option>
+                        <option value="PROTESTAN" {{ $warga->agama == 'PROTESTAN' ? 'selected' : '' }}>PROTESTAN</option>
+                        <option value="KATOLIK" {{ $warga->agama == 'KATOLIK' ? 'selected' : '' }}>KATOLIK</option>
+                        <option value="HINDU" {{ $warga->agama == 'HINDU' ? 'selected' : '' }}>HINDU</option>
+                        <option value="BUDHA" {{ $warga->agama == 'BUDHA' ? 'selected' : '' }}>BUDHA</option>
+                        <option value="KONGHUCU" {{ $warga->agama == 'KONGHUCU' ? 'selected' : '' }}>KONGHUCU</option>
+                </select>
             </div>
 
             <div>

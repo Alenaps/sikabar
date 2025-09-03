@@ -19,7 +19,7 @@ return new class extends Migration
     $table->string('tempat_kematian');
     $table->timestamps();
 
-    $table->foreign('nik')->references('nik')->on('warga')->onDelete('cascade');
+    $table->foreign('nik')->references('nik')->on('warga');
 });
 
     }
