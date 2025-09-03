@@ -6,6 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\KartuKeluargaModel;
 use App\Models\WargaModel;
+use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+
+
+
 
 class WargaController extends Controller
 {
@@ -90,4 +95,92 @@ class WargaController extends Controller
         $warga->delete();
         return back()->with('success', 'Data warga berhasil dihapus.');
     }
+
+    public function import(Request $request)
+{
+    $file = $request->file('file');
+    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file);
+    $sheet = $spreadsheet->getActiveSheet();
+    $rows = $sheet->toArray(null, true, true, true);
+
+    foreach ($rows as $index => $row) {
+        if ($index == 1) continue; // skip header
+
+        $nik       = $row['A'];
+        $nama      = $row['B'];
+        $jk        = $row['C'];
+        $tempat    = $row['D'];
+        $tgl_lahir = $row['E']; // tanggal lahir
+        $agama     = $row['F'];
+        $status    = $row['G'];
+        $hubungan  = $row['H'];
+        $no_kk     = $row['I'];
+
+        if (!$no_kk) {
+            continue;
+        }
+
+        // --- Handle tanggal lahir ---
+        $tanggal_lahir = null;
+        if ($tgl_lahir) {
+            try {
+                if (is_numeric($tgl_lahir)) {
+                    // Format Excel numeric (serial date)
+                    $tanggal_lahir = Date::excelToDateTimeObject($tgl_lahir)->format('Y-m-d');
+                } else {
+                    // Hilangkan spasi
+                    $tgl_lahir = trim($tgl_lahir);
+
+                    // Coba parse dengan beberapa format
+                    $formats = ['d/m/Y', 'Y-m-d', 'd-m-Y', 'd M Y'];
+                    foreach ($formats as $format) {
+                        try {
+                            $tanggal_lahir = Carbon::createFromFormat($format, $tgl_lahir)->format('Y-m-d');
+                            break; // keluar loop kalau berhasil
+                        } catch (\Exception $e) {
+                            continue;
+                        }
+                    }
+                }
+
+                // Validasi tahun biar masuk akal
+                if ($tanggal_lahir) {
+                    $year = Carbon::parse($tanggal_lahir)->year;
+                    if ($year < 1900 || $year > 2100) {
+                        $tanggal_lahir = null;
+                    }
+                }
+            } catch (\Exception $e) {
+                $tanggal_lahir = null;
+            }
+        }
+
+        
+
+
+        // --- Cari atau buat KK ---
+        $kk = KartuKeluargaModel::firstOrCreate(
+            ['no_kk' => $no_kk],
+            ['alamat' => '-', 'desa' => '-']
+        );
+
+        // --- Insert / Update Warga ---
+        WargaModel::updateOrCreate(
+            ['nik' => $nik],
+            [
+                'nama' => $nama,
+                'jenis_kelamin' => $jk,
+                'tempat_lahir' => $tempat,
+                'tanggal_lahir' => $tanggal_lahir,
+                'agama' => $agama,
+                'status_kependudukkan' => $status,
+                'hubungan_dalam_keluarga' => $hubungan,
+                'kartu_keluarga_id' => $kk->id,
+            ]
+        );
+    }
+
+    return redirect()->back()->with('success', 'Import data berhasil!');
+}
+
 }

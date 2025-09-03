@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\KartuKeluargaModel;
 use App\Models\WargaModel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class KartuKeluargaController extends Controller
 {
@@ -93,6 +94,40 @@ class KartuKeluargaController extends Controller
     public function anggota()
     {
         return $this->hasMany(WargaModel::class, 'kartu_keluarga_id');
+    }
+
+        public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        $file = $request->file('file');
+        $spreadsheet = IOFactory::load($file);
+        $sheet = $spreadsheet->getActiveSheet();
+        $rows = $sheet->toArray(null, true, true, true);
+
+        foreach ($rows as $index => $row) {
+            if ($index == 1) continue; // Skip header
+
+            $no_kk  = $row['A'];
+            $alamat = $row['B'];
+            $desa   = $row['C'];
+
+            if (!$no_kk) {
+                continue;
+            }
+
+            KartuKeluargaModel::updateOrCreate(
+                ['no_kk' => $no_kk],
+                [
+                    'alamat' => $alamat ?? '-',
+                    'desa'   => $desa ?? '-',
+                ]
+            );
+        }
+
+        return redirect()->back()->with('success', 'Data Kartu Keluarga berhasil diimport!');
     }
 
 }

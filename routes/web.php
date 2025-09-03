@@ -90,6 +90,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('pendatang', AdminPendatangController::class);
     Route::resource('kelahiran', AdminKelahiranController::class);
     Route::resource('kematian', AdminKematianController::class);
+
+    Route::post('warga/import', [AdminWargaController::class, 'import'])->name('warga.import');
+    Route::post('kartukeluarga/import', [AdminKKController::class, 'import'])->name('kartukeluarga.import');
 });
 
 // ROUTE PROFILE PENGGUNA

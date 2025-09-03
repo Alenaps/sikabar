@@ -16,6 +16,12 @@
             <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Cari</button>
         </form>
 
+        <form action="{{ route('admin.kartukeluarga.import') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2">
+            @csrf
+            <input type="file" name="file" class="border rounded px-2 py-1 text-sm" required>
+            <button type="submit" class="bg-purple-500 text-white px-4 py-2 rounded text-sm">Import</button>
+        </form>
+
         <a href="{{ route('admin.kartukeluarga.create') }}" class="bg-green-500 text-white px-4 py-2 rounded">+ Tambah KK</a>
     </div>
 
